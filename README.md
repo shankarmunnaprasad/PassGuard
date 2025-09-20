@@ -71,7 +71,8 @@ Expand PassGuard into a full-fledged password toolkit with features like:
 ---
 
 ## 🙌 Credits
-Created by Shankar Munna Prasad 
+Created by Shankar Munna Prasad,
+
 Hackathon Project | Theme: Cybersecurity & Blockchain
 
 ---
