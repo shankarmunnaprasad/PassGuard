@@ -6,7 +6,7 @@ PassGuard is a lightweight, responsive web application designed to help users ge
 
 ## 🧠 Problem Statement
 
-Many users reuse weak, guessable passwords across multiple platforms, making them vulnerable to data breaches and identity theft. There’s a need for a simple, accessible tool that helps users create secure passwords tailored to their needs.
+Many users reuse weak, guessable passwords across multiple platforms, making them vulnerable to data breaches and identity theft. There’s a need for a simple, accessible tool that helps users create secure passwords tailored to their needs. 
 
 ---
 
