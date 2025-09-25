@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PassGuard-Secure Password Generator</title>
+  <meta name="description" content="PassGuard: privacy-first secure password generator with strength analysis, presets, and light/dark mode." />
+  <link rel="icon" href="PassGuard.png" type="image/png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div class="brand">
+         <div class="logo-card">
+         <img src="PassGuard.png" alt="PassGuard" class="logo" />
+         </div>
+
+        <div class="brand-text">
+          <h1>PassGuard</h1>
+          <p class="subtitle">Secure Password Generator</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        
+        <div class="theme-toggle" role="toolbar" aria-label="Theme">
+          <button id="themeBtn" aria-pressed="false" title="Toggle light / dark" class="icon-btn">
+          <span class="icon">🌙</span>
+          </button>
+        </div>
+
+        <a class="cta" id="deployBtn" href="#" hidden>Deploy</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel generate-panel" aria-labelledby="generateTitle">
+      <h2 id="generateTitle">Generate Password</h2>
+
+      <div class="grid">
+        <div class="controls">
+          <label class="range-label">Length <span id="lengthVal">8</span>
+            <input id="length" type="range" min="4" max="32" value="8" />
+          </label>
+
+          <div class="toggles" role="group" aria-label="Character types">
+            <label><input id="lower" type="checkbox" checked /> Lowercase</label>
+            <label><input id="upper" type="checkbox" checked /> Uppercase</label>
+            <label><input id="numbers" type="checkbox" checked /> Numbers</label>
+            <label><input id="symbols" type="checkbox" /> Symbols</label>
+            <label><input id="ambiguous" type="checkbox" /> Exclude ambiguous chars</label>
+          </div>
+
+         <div class="presets-card" aria-label="Presets">
+  <div class="presets-head">
+    <div class="presets-title">Presets</div>
+    <div class="presets-sub">Quick choices for common needs</div>
+  </div>
+
+  <div class="preset-buttons">
+    <button class="preset" data-length="6" data-types="numbers" title="PIN (numbers only)">
+      <span class="preset-icon">🔢</span>
+      <span class="preset-label">PIN</span>
+      <span class="preset-desc">6 digits</span>
+    </button>
+
+    <button class="preset" data-length="12" data-types="lower,upper,numbers" title="Web Login (letters + numbers)">
+      <span class="preset-icon">🌐</span>
+      <span class="preset-label">Web Login</span>
+      <span class="preset-desc">12 chars</span>
+    </button>
+
+    <button class="preset" data-length="20" data-types="lower,upper,numbers,symbols" title="High Security (full set)">
+      <span class="preset-icon">🛡️</span>
+      <span class="preset-label">High Security</span>
+      <span class="preset-desc">20 chars</span>
+    </button>
+
+    <button class="preset" data-length="16" data-types="lower,upper,numbers" title="Memory-friendly strong password">
+      <span class="preset-icon">✨</span>
+      <span class="preset-label">Balanced</span>
+      <span class="preset-desc">16 chars</span>
+    </button>
+  </div>
+</div>
+          <div class="actions-row">
+            <button id="generate" class="btn primary">Generate</button>
+            <button id="randomize" class="btn">Shuffle</button>
+          </div>
+
+        </div>
+
+        <div class="result-area" aria-live="polite">
+          <label>Result</label>
+          <div class="result-row">
+            <input id="result" readonly placeholder="Your secure password" />
+            <div class="result-actions">
+              <button id="copyBtn" class="btn">Copy</button>
+              <button id="exportBtn" class="btn">Export</button>
+            </div>
+          </div>
+
+          <div class="strength">
+            <div class="strength-bar" aria-hidden="true"><div id="barInner"></div></div>
+            <div id="strengthText" class="strength-text">Strength: </div>
+          </div>
+
+          <details class="rules" open>
+            <summary>Password rules preview</summary>
+            <ul id="rulesList"></ul>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="panel about-panel" aria-labelledby="aboutTitle">
+      <h2 id="aboutTitle">About PassGuard</h2>
+      <p>PassGuard is a privacy-first, client-side password generator designed to help users create strong, unique passwords quickly.</p>
+      <p>It offers configurable rules so users can choose length and which character types to include.</p>
+      <p>The app provides a real-time strength meter that gives immediate feedback on password quality.</p>
+
+      <h3>Features</h3>
+      <ul class="feature-list">
+        <li>Length and character-type controls</li>
+        <li>Presets and quick actions</li>
+        <li>Strength meter with breakdown</li>
+        <li>One-click copy and JSON export for generated passwords.</li>
+        <li>Light and dark themes with system preference support</li>
+      </ul>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <small>Created by <b>SHANKAR MUNNA PRASAD</b></small>
+      <div class="footer-links">
+        <a href="https://github.com/shankarmunnaprasad" target="_blank" id="repoLink">GitHub</a>
+        <a href="mailto:shankarmunnaprasad@gmail.com" target="_blank" id="contactLink">Contact Us</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

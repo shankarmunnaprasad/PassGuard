@@ -1,0 +1,319 @@
+:root{
+  /* theme tokens (light) */
+  --bg-start: #f3f7fb;
+  --bg-end: #eaf0f8;
+  --panel: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,252,255,0.95));
+  --text: #0b1220;
+  --muted: #55607a;
+  --accent: #1e90ff;
+  --danger: #ff6b6b;
+  --glass: rgba(2,6,23,0.04);
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(12,20,40,0.06);
+  --max-w: 1100px;
+  --gap: 16px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+}
+
+/* attractive light background: diagonal subtle gradient + soft noise-like overlay */
+body{
+  background:
+    linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 60%),
+    radial-gradient(800px 300px at 10% 10%, rgba(30,144,255,0.04), transparent 10%),
+    radial-gradient(600px 220px at 90% 90%, rgba(49,208,168,0.03), transparent 10%);
+  color: var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* make panels pop on the new background */
+.panel{
+  background: var(--panel);
+  border: 1px solid rgba(13,24,40,0.04);
+  box-shadow: var(--shadow);
+}
+
+/* slightly darker muted text for better contrast on gradient */
+.small, .muted, .subtitle, .strength-text, .rules ul li {
+  color: var(--muted);
+}
+
+/* accent glow for primary buttons on light background */
+.btn.primary{
+  box-shadow: 0 8px 28px rgba(30,144,255,0.12);
+}
+
+/* logo card: lift and subtle glow */
+.logo{
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,255,0.8));
+  box-shadow: 0 10px 30px rgba(30,144,255,0.06);
+  border-radius: 12px;
+}
+
+
+/* Ensure form controls inherit readable text color in both themes */
+input, textarea, select, button {
+  color: var(--text);
+  background: transparent;
+  caret-color: var(--accent);
+}
+
+/* Placeholder visibility across browsers */
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 70%, black 30%);
+  opacity: 1;
+}
+
+/* Stronger placeholder color specifically for dark theme */
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 85%, white 15%);
+}
+
+/* Ensure result input (monospace) is clearly visible */
+.result-row input {
+  color: var(--text);
+  background: transparent;
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Buttons — readable text on tinted backgrounds */
+.btn { color: var(--text); }
+.btn.primary { color: #061428; } /* if primary uses light text on accent, keep as-is */
+
+/* Muted text contrast improvement */
+.small, .muted, .subtitle, .strength-text, .rules ul li {
+  color: var(--muted);
+}
+
+/* Dark theme overrides (if using body.dark) — boost contrast */
+body.dark {
+  --muted: #94a3c4;
+  --text: #e6f0ff;
+  --accent: #3ab0ff;
+}
+
+/* Extra: make mono font in result clear */
+/*.result-row input { font-family: var(--mono); font-weight: 600; letter-spacing: 0.6px; }
+
+
+/* Dark theme variables (applied via .dark on body) */
+body.dark{
+  --bg:#071026;
+  --panel: #071022;
+  --text:#dbe6ff;
+  --muted:#7b818d;
+  --accent:#3ab0ff;
+  --glass: rgba(255,255,255,0.02);
+  --shadow: 0 10px 30px rgba(2,6,23,0.6);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,var(--bg), color-mix(in srgb, var(--bg) 90%, black 10%));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{max-width:var(--max-w);margin:0 auto;padding:20px}
+
+.site-header{padding:18px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.header-grid{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:56px;height:56px;border-radius:10px;object-fit:cover;box-shadow:var(--shadow)}
+.brand-text h1{margin:0;font-size:20px}
+.subtitle{margin:0;color:var(--muted);font-size:13px}
+
+.header-actions{display:flex;gap:8px;align-items:center}
+.theme-toggle button{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 10px;border-radius:8px;cursor:pointer}
+.theme-toggle button:focus{outline:2px solid rgba(30,144,255,0.18)}
+
+.cta{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;text-decoration:none}
+
+main{padding:18px 0;display:grid;grid-template-columns:1fr;gap:var(--gap)}
+
+.panel{
+  background:var(--panel);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+  border:1px solid rgba(0,0,0,0.04);
+}
+
+.generate-panel .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+@media (max-width:900px){ .generate-panel .grid{grid-template-columns:1fr} }
+
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:8px}
+.range-label{display:flex;align-items:center;gap:10px;justify-content:space-between}
+input[type="range"]{width:100%}
+
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.toggles label{background:var(--glass);padding:8px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:8px}
+
+.preset-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.preset{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 10px;border-radius:8px;cursor:pointer}
+
+.actions-row{display:flex;gap:8px;margin-top:12px}
+.btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;cursor:pointer}
+.btn.primary{background:var(--accent);color:white;border-color:transparent}
+.btn.danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+
+.result-area label{font-weight:600;color:var(--muted)}
+.result-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.result-row input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;font-family:var(--mono);color:var(--text)}
+.result-actions{display:flex;flex-direction:column;gap:8px}
+
+.strength{display:flex;align-items:center;gap:12px;margin-top:12px}
+.strength-bar{width:220px;height:12px;background:rgba(0,0,0,0.06);border-radius:10px;overflow:hidden}
+.strength-bar #barInner{height:100%;width:0;transition:width 200ms linear;background:linear-gradient(90deg,#ff6b6b,#ffd166,#31d0a8);border-radius:8px}
+.strength-text{color:var(--muted);font-size:13px}
+
+.rules summary{cursor:pointer;font-weight:600;margin-top:12px}
+.rules ul{margin:8px 0 0 18px;color:var(--muted)}
+
+.about-panel ul.feature-list{columns:1;gap:10px}
+.small-panel{max-width:520px}
+
+/* Logo card border, glow and responsive sizing */
+.logo-card{
+  display:inline-grid;
+  place-items:center;
+  padding:6px;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+  box-shadow: 0 8px 26px rgba(30,144,255,0.06), inset 0 1px 0 rgba(255,255,255,0.5);
+  border: 1px solid rgba(30,144,255,0.12);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* dark theme variant for logo card */
+body.dark .logo-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(58,176,255,0.08);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.45), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* subtle lift on hover */
+.logo-card:hover{ transform: translateY(-4px); box-shadow: 0 14px 36px rgba(30,144,255,0.10); }
+
+/* Logo sizing adjustments */
+.logo{ width:56px; height:56px; border-radius:10px; object-fit:contain; display:block; }
+
+/* Theme toggle icon button (compact rounded) */
+.icon-btn{
+  display:inline-grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,250,255,0.7));
+  border: 1px solid rgba(30,144,255,0.10);
+  box-shadow: 0 8px 22px rgba(30,144,255,0.06);
+  cursor:pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  font-size:18px;
+  line-height:1;
+}
+
+/* Dark theme variant for toggle */
+body.dark .icon-btn{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(58,176,255,0.10);
+  box-shadow: 0 10px 28px rgba(2,6,23,0.50);
+  color: var(--text);
+}
+
+/* hover & active states */
+.icon-btn:hover{ transform: translateY(-3px); box-shadow: 0 12px 34px rgba(30,144,255,0.10); }
+.icon-btn:active{ transform: translateY(-1px); }
+
+/* focus ring for keyboard users */
+.icon-btn:focus{ outline: none; box-shadow: 0 0 0 4px rgba(30,144,255,0.12); }
+
+/* pressed state (when aria-pressed true) — inverted accent */
+.icon-btn[aria-pressed="true"]{
+  background: linear-gradient(180deg, rgba(30,144,255,0.12), rgba(30,144,255,0.06));
+  border-color: transparent;
+  color: #042033;
+}
+
+/* make sure header layout spacing keeps toggle aligned */
+.header-actions{ display:flex; gap:10px; align-items:center; }
+
+/* Responsive tweak */
+@media (max-width:680px){
+  .logo{ width:48px; height:48px; }
+  .icon-btn{ width:40px; height:40px; font-size:16px; border-radius:10px; }
+}
+
+
+/* Presets card */
+.presets-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.06);
+}
+
+.presets-head{display:flex;flex-direction:column;margin-bottom:10px}
+.presets-title{font-weight:700;font-size:14px;color:var(--text)}
+.presets-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Preset buttons grid */
+.preset-buttons{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:10px;
+}
+
+/* Individual preset button (pill) */
+.preset{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:transparent;
+  border:1px solid rgba(0,0,0,0.06);
+  cursor:pointer;
+  transition:transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+  font-weight:600;
+  color:var(--text);
+}
+
+/* icon, label, desc */
+.preset-icon{font-size:20px;display:inline-block;width:28px;text-align:center}
+.preset-label{flex:1;text-align:left}
+.preset-desc{font-size:12px;color:var(--muted)}
+
+/* primary look on hover / active */
+.preset:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(12,20,40,0.06);background:linear-gradient(90deg, rgba(30,144,255,0.06), rgba(30,144,255,0.02))}
+.preset:active{transform:translateY(-1px)}
+
+/* special primary preset (High Security) */
+.preset[data-types*="symbols"]{
+  border-color: transparent;
+  background: linear-gradient(90deg, rgba(49,208,168,0.12), rgba(30,144,255,0.06));
+}
+
+/* responsive: single column on smaller screens */
+@media (max-width:680px){
+  .preset-buttons{grid-template-columns:1fr}
+  .presets-card{padding:10px}
+  .preset{padding:12px 14px;border-radius:10px}
+}
+
+
+/* Utilities */
+.small{font-size:13px;color:var(--muted)}
+.center{display:flex;justify-content:center;align-items:center}
+
+/* Footer */
+.site-footer{padding:14px 0;border-top:1px solid rgba(0,0,0,0.04);margin-top:16px}
+.footer-grid{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.footer-links a{margin-left:10px;color:var(--muted);text-decoration:none}
+
+/* Focus & accessibility */
+button:focus,input:focus{outline:2px solid rgba(30,144,255,0.18);outline-offset:2px}
