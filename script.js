@@ -35,7 +35,11 @@
   const LS = { theme: 'passguard_theme', prefs: 'passguard_prefs' };
 
   // Helpers
-  const randInt = n => Math.floor(Math.random() * n);
+   const randInt = n => {
+  const arr = new Uint32Array(1);
+  window.crypto.getRandomValues(arr);
+  return arr[0] % n;
+  };
   const savePrefs = prefs => localStorage.setItem(LS.prefs, JSON.stringify(prefs));
   const loadPrefs = () => JSON.parse(localStorage.getItem(LS.prefs) || '{}');
 
@@ -65,9 +69,7 @@
 
     // populate rules UI
     updateRules();
-    // load history
-    renderHistory();
-
+    
     // initial generate
     setTimeout(() => generate(), 80);
   }
@@ -112,24 +114,53 @@
 
   // Strength meter (simple heuristic)
   function updateStrength(pw, opts) {
-    let score = 0;
-    if (pw.length >= 8) score++;
-    if (pw.length >= 12) score++;
-    const types = [opts.lower, opts.upper, opts.numbers, opts.symbols].filter(Boolean).length;
-    score += types; // up to +4
-    const pct = Math.min(100, Math.round((score / 6) * 100));
-    barInner.style.width = pct + '%';
-    let label = 'Weak';
-    if (pct > 66) label = 'Strong';
-    else if (pct > 33) label = 'Medium';
-    strengthText.textContent = `Strength: ${label}`;
-    // color gradient via inline style
-    if (pct > 66) barInner.style.background = 'linear-gradient(90deg,#31d0a8,#2bd19a)';
-    else if (pct > 33) barInner.style.background = 'linear-gradient(90deg,#ffd166,#ffb36b)';
-    else barInner.style.background = 'linear-gradient(90deg,#ff6b6b,#ff8f8f)';
-
-    updateRules();
+    
+    // compute pool size
+  let poolSize = 0;
+  if (opts.lower) poolSize += SETS.lower.length;
+  if (opts.upper) poolSize += SETS.upper.length;
+  if (opts.numbers) poolSize += SETS.numbers.length;
+  if (opts.symbols) poolSize += SETS.symbols.length;
+  // if ambiguous excluded, subtract ambiguous chars present in pool
+  if (opts.excludeAmbig) {
+    const ambCount = Array.from(AMBIG).filter(ch =>
+      (opts.lower && SETS.lower.includes(ch)) ||
+      (opts.upper && SETS.upper.includes(ch)) ||
+      (opts.numbers && SETS.numbers.includes(ch)) ||
+      (opts.symbols && SETS.symbols.includes(ch))
+    ).length;
+    poolSize = Math.max(1, poolSize - ambCount);
   }
+  // bits of entropy = log2(poolSize) * length
+  const bitsPerChar = poolSize > 1 ? Math.log2(poolSize) : 0;
+  return Math.round(bitsPerChar * pw.length);
+}
+
+function updateStrength(pw, opts) {
+  const entropy = estimateEntropy(pw, opts); // bits
+  // map entropy to percentage: 0 bits -> 0%, 80 bits -> 100% (adjustable)
+  const MAX_BITS = 80;
+  const pct = Math.min(100, Math.round((entropy / MAX_BITS) * 100));
+
+  // choose label thresholds (bits-based)
+  let label = 'Very weak';
+  if (entropy >= 80) label = 'Very strong';
+  else if (entropy >= 60) label = 'Strong';
+  else if (entropy >= 40) label = 'Medium';
+  else if (entropy >= 24) label = 'Weak';
+
+  // update bar
+  barInner.style.width = pct + '%';
+  strengthText.textContent = `Strength: ${label}`;
+
+  // color gradient by pct
+  if (pct > 80) barInner.style.background = 'linear-gradient(90deg,#31d0a8,#2bd19a)';
+  else if (pct > 60) barInner.style.background = 'linear-gradient(90deg,#7ee787,#31d0a8)';
+  else if (pct > 40) barInner.style.background = 'linear-gradient(90deg,#ffd166,#ffb36b)';
+  else barInner.style.background = 'linear-gradient(90deg,#ff6b6b,#ff8f8f)';
+
+  updateRules();
+}
 
   // Rules preview
   function updateRules() {
@@ -144,14 +175,30 @@
   }
 
 
-  // Export (download JSON)
-  function exportResult() {
-    const text = resultInput.value;
-    if (!text) return alert('No password to export.');
-    const blob = new Blob([JSON.stringify({ pw: text, created: new Date().toISOString() }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `passguard-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  // Export (download TXT)
+function exportResult() {
+  const text = resultInput.value;
+  if (!text) return alert('No password to export.');
+
+  const now = new Date();
+  const timestamp = now.toLocaleString();
+  const fnTimestamp = now.toISOString().replace(/[:.]/g, '-');
+  const content = [
+    'PassGuard Password Export',
+    `Date: ${timestamp}`,
+    '',
+    `Password: ${text}`
+  ].join('\n');
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `passguard-${fnTimestamp}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
   }
 
   // Copy to clipboard
@@ -187,28 +234,32 @@
   });
   copyBtn.addEventListener('click', copyToClipboard);
   exportBtn.addEventListener('click', exportResult);
-  presets.forEach(p => p.addEventListener('click', e => {
-    const btn = e.currentTarget;
-    lengthEl.value = btn.dataset.length;
-    lengthVal.textContent = btn.dataset.length;
-    const types = (btn.dataset.types || '').split(',').map(s=>s.trim());
+  presets.forEach(btn => {
+  btn.addEventListener('click', e => {
+    // apply preset values
+    const len = btn.dataset.length;
+    lengthEl.value = len;
+    lengthVal.textContent = len;
+
+    const types = (btn.dataset.types || '').split(',').map(s => s.trim());
     lower.checked = types.includes('lower');
     upper.checked = types.includes('upper');
     numbers.checked = types.includes('numbers');
     symbols.checked = types.includes('symbols');
+
     updateRules();
     generate();
-  }));
-  themeBtn.addEventListener('click', toggleTheme);
 
-  // visual feedback for preset clicks
-document.querySelectorAll('.preset').forEach(btn => {
-  btn.addEventListener('click', e => {
+    // visual feedback (single, short-lived class)
     btn.classList.add('preset--active');
     setTimeout(() => btn.classList.remove('preset--active'), 260);
   });
 });
 
+ // register theme handler (single listener)
+themeBtn.addEventListener('click', toggleTheme);
+  
   // Init
   init();
 })();
+
